@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RentEase - Smart Rental Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sidebar {
+            transition: all 0.3s;
+        }
+        .dashboard-content {
+            transition: all 0.3s;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                position: absolute;
+                z-index: 50;
+                height: 100vh;
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .dashboard-content {
+                margin-left: 0 !important;
+            }
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        .payment-method:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <div class="sidebar bg-indigo-800 text-white w-64 flex-shrink-0">
+            <div class="p-4 flex items-center space-x-3 border-b border-indigo-700">
+                <i class="fas fa-home text-2xl"></i>
+                <h1 class="text-xl font-bold">RentEase</h1>
+            </div>
+            <nav class="p-4">
+                <div class="mb-8">
+                    <p class="text-indigo-300 uppercase text-xs font-semibold mb-3">Navigation</p>
+                    <a href="#" class="flex items-center space-x-3 py-2 px-3 bg-indigo-900 rounded-lg mb-2">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 py-2 px-3 hover:bg-indigo-900 rounded-lg mb-2">
+                        <i class="fas fa-users"></i>
+                        <span>Tenants</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 py-2 px-3 hover:bg-indigo-900 rounded-lg mb-2">
+                        <i class="fas fa-building"></i>
+                        <span>Properties</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 py-2 px-3 hover:bg-indigo-900 rounded-lg mb-2">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <span>Invoices</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 py-2 px-3 hover:bg-indigo-900 rounded-lg mb-2">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Reports</span>
+                    </a>
+                </div>
+                <div>
+                    <p class="text-indigo-300 uppercase text-xs font-semibold mb-3">Settings</p>
+                    <a href="#" class="flex items-center space-x-3 py-2 px-3 hover:bg-indigo-900 rounded-lg mb-2">
+                        <i class="fas fa-cog"></i>
+                        <span>System Settings</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 py-2 px-3 hover:bg-indigo-900 rounded-lg mb-2">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                        <span class="notification-badge bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="dashboard-content flex-1 overflow-auto">
+            <!-- Top Navigation -->
+            <header class="bg-white shadow-sm p-4 flex justify-between items-center">
+                <button id="sidebarToggle" class="md:hidden text-gray-600">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <i class="fas fa-bell text-gray-600 text-xl"></i>
+                        <span class="notification-badge bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="h-8 w-8 rounded-full">
+                        <span class="font-medium">John Doe</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <main class="p-4 md:p-6">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Dashboard Overview</h2>
+                    <p class="text-gray-600">Welcome back! Here's what's happening with your properties.</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500">Total Properties</p>
+                                <h3 class="text-2xl font-bold">12</h3>
+                            </div>
+                            <div class="bg-indigo-100 p-3 rounded-full">
+                                <i class="fas fa-building text-indigo-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500">Active Tenants</p>
+                                <h3 class="text-2xl font-bold">24</h3>
+                            </div>
+                            <div class="bg-green-100 p-3 rounded-full">
+                                <i class="fas fa-users text-green-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500">This Month's Rent</p>
+                                <h3 class="text-2xl font-bold">KSh 240,500</h3>
+                            </div>
+                            <div class="bg-blue-100 p-3 rounded-full">
+                                <i class="fas fa-money-bill-wave text-blue-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500">Vacant Units</p>
+                                <h3 class="text-2xl font-bold">3</h3>
+                            </div>
+                            <div class="bg-yellow-100 p-3 rounded-full">
+                                <i class="fas fa-door-open text-yellow-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts and Payment Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                    <!-- Rent Collection Chart -->
+                    <div class="lg:col-span-2 bg-white rounded-lg shadow p-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-semibold text-lg">Rent Collection</h3>
+                            <select class="border rounded px-3 py-1 text-sm">
+                                <option>Last 6 Months</option>
+                                <option>This Year</option>
+                                <option>Last Year</option>
+                            </select>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="rentChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Quick Payment -->
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <h3 class="font-semibold text-lg mb-4">Record Payment</h3>
+                        <form>
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm mb-2">Tenant</label>
+                                <select class="w-full border rounded px-3 py-2">
+                                    <option>Select Tenant</option>
+                                    <option>James Kamau - Unit 12</option>
+                                    <option>Mary Wanjiku - Unit 5</option>
+                                    <option>Peter Mwangi - Unit 8</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm mb-2">Amount (KSh)</label>
+                                <input type="number" class="w-full border rounded px-3 py-2" placeholder="Enter amount">
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm mb-2">Payment Method</label>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <div class="payment-method bg-blue-50 border border-blue-100 rounded p-3 text-center cursor-pointer transition">
+                                        <i class="fas fa-mobile-alt text-blue-500 text-xl mb-2"></i>
+                                        <p class="text-xs">MPESA</p>
+                                    </div>
+                                    <div class="payment-method bg-purple-50 border border-purple-100 rounded p-3 text-center cursor-pointer transition">
+                                        <i class="fas fa-university text-purple-500 text-xl mb-2"></i>
+                                        <p class="text-xs">Equity</p>
+                                    </div>
+                                    <div class="payment-method bg-green-50 border border-green-100 rounded p-3 text-center cursor-pointer transition">
+                                        <i class="fas fa-landmark text-green-500 text-xl mb-2"></i>
+                                        <p class="text-xs">Co-op</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm mb-2">Payment Reference</label>
+                                <input type="text" class="w-full border rounded px-3 py-2" placeholder="Enter reference">
+                            </div>
+                            <button class="w-full bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 transition">
+                                Record Payment
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Recent Payments and Reminders -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Recent Payments -->
+                    <div class="bg-white rounded-lg shadow">
+                        <div class="p-4 border-b">
+                            <h3 class="font-semibold text-lg">Recent Payments</h3>
+                        </div>
+                        <div class="divide-y">
+                            <div class="p-4 flex justify-between items-center">
+                                <div class="flex items-center space-x-3">
+                                    <div class="bg-green-100 p-2 rounded-full">
+                                        <i class="fas fa-check-circle text-green-500"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">James Kamau</p>
+                                        <p class="text-sm text-gray-500">Unit 12 - Rent for July</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-medium">KSh 15,000</p>
+                                    <p class="text-sm text-gray-500">Today, 10:30 AM</p>
+                                </div>
+                            </div>
+                            <div class="p-4 flex justify-between items-center">
+                                <div class="flex items-center space-x-3">
+                                    <div class="bg-green-100 p-2 rounded-full">
+                                        <i class="fas fa-check-circle text-green-500"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">Mary Wanjiku</p>
+                                        <p class="text-sm text-gray-500">Unit 5 - Rent for July</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-medium">KSh 12,500</p>
+                                    <p class="text-sm text-gray-500">Yesterday, 2:15 PM</p>
+                                </div>
+                            </div>
+                            <div class="p-4 flex justify-between items-center">
+                                <div class="flex items-center space-x-3">
+                                    <div class="bg-green-100 p-2 rounded-full">
+                                        <i class="fas fa-check-circle text-green-500"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">Peter Mwangi</p>
+                                        <p class="text-sm text-gray-500">Unit 8 - Rent for July</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-medium">KSh 18,000</p>
+                                    <p class="text-sm text-gray-500">Yesterday, 9:45 AM</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 border-t text-center">
+                            <a href="#" class="text-indigo-600 hover:underline">View all payments</a>
+                        </div>
+                    </div>
+
+                    <!-- Payment Reminders -->
+                    <div class="bg-white rounded-lg shadow">
+                        <div class="p-4 border-b flex justify-between items-center">
+                            <h3 class="font-semibold text-lg">Payment Reminders</h3>
+                            <button class="bg-indigo-600 text-white py-1 px-3 rounded text-sm hover:bg-indigo-700 transition">
+                                Send All
+                            </button>
+                        </div>
+                        <div class="divide-y">
+                            <div class="p-4 flex justify-between items-center">
+                                <div class="flex items-center space-x-3">
+                                    <div class="bg-yellow-100 p-2 rounded-full">
+                                        <i class="fas fa-exclamation-circle text-yellow-500"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">Sarah Njeri</p>
+                                        <p class="text-sm text-gray-500">Unit 3 - Rent overdue (5 days)</p>
+                                    </div>
+                                </div>
+                                <button class="text-sm bg-gray-100 hover:bg-gray-200 py-1 px-3 rounded transition">
+                                    Remind
+                                </button>
+                            </div>
+                            <div class="p-4 flex justify-between items-center">
+                                <div class="flex items-center space-x-3">
+                                    <div class="bg-yellow-100 p-2 rounded-full">
+                                        <i class="fas fa-exclamation-circle text-yellow-500"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">David Ochieng</p>
+                                        <p class="text-sm text-gray-500">Unit 7 - Rent due in 2 days</p>
+                                    </div>
+                                </div>
+                                <button class="text-sm bg-gray-100 hover:bg-gray-200 py-1 px-3 rounded transition">
+                                    Remind
+                                </button>
+                            </div>
+                            <div class="p-4 flex justify-between items-center">
+                                <div class="flex items-center space-x-3">
+                                    <div class="bg-yellow-100 p-2 rounded-full">
+                                        <i class="fas fa-exclamation-circle text-yellow-500"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">Grace Atieno</p>
+                                        <p class="text-sm text-gray-500">Unit 9 - Rent due tomorrow</p>
+                                    </div>
+                                </div>
+                                <button class="text-sm bg-gray-100 hover:bg-gray-200 py-1 px-3 rounded transition">
+                                    Remind
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-4 border-t">
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-cog text-gray-500"></i>
+                                <a href="#" class="text-indigo-600 hover:underline">Configure reminder settings</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Section -->
+                <div class="mt-6 bg-white rounded-lg shadow">
+                    <div class="p-4 border-b flex justify-between items-center">
+                        <h3 class="font-semibold text-lg">Quick Reports</h3>
+                        <div class="flex space-x-2">
+                            <button class="bg-gray-100 hover:bg-gray-200 py-1 px-3 rounded text-sm transition">
+                                <i class="fas fa-file-pdf mr-1"></i> PDF
+                            </button>
+                            <button class="bg-gray-100 hover:bg-gray-200 py-1 px-3 rounded text-sm transition">
+                                <i class="fas fa-file-excel mr-1"></i> Excel
+                            </button>
+                            <button class="bg-gray-100 hover:bg-gray-200 py-1 px-3 rounded text-sm transition">
+                                <i class="fas fa-print mr-1"></i> Print
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="border rounded-lg p-3 hover:bg-gray-50 cursor-pointer transition">
+                            <div class="flex items-center space-x-3">
+                                <div class="bg-blue-100 p-2 rounded-full">
+                                    <i class="fas fa-file-invoice-dollar text-blue-500"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium">Rent Collection Report</p>
+                                    <p class="text-sm text-gray-500">Monthly rent collection summary</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border rounded-lg p-3 hover:bg-gray-50 cursor-pointer transition">
+                            <div class="flex items-center space-x-3">
+                                <div class="bg-green-100 p-2 rounded-full">
+                                    <i class="fas fa-users text-green-500"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium">Tenant Statements</p>
+                                    <p class="text-sm text-gray-500">Individual tenant payment history</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border rounded-lg p-3 hover:bg-gray-50 cursor-pointer transition">
+                            <div class="flex items-center space-x-3">
+                                <div class="bg-purple-100 p-2 rounded-full">
+                                    <i class="fas fa-building text-purple-500"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium">Property Performance</p>
+                                    <p class="text-sm text-gray-500">Income by property analysis</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal for Payment Confirmation -->
+    <div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
+            <div class="p-4 border-b flex justify-between items-center">
+                <h3 class="font-semibold text-lg">Payment Confirmation</h3>
+                <button id="closeModal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <div class="flex justify-center mb-4">
+                    <div class="bg-green-100 p-4 rounded-full">
+                        <i class="fas fa-check-circle text-green-500 text-4xl"></i>
+                    </div>
+                </div>
+                <h4 class="text-center font-medium text-lg mb-2">Payment Recorded Successfully!</h4>
+                <p class="text-center text-gray-600 mb-6">The payment details have been saved and the tenant has been notified via SMS.</p>
+                <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-600">Tenant:</span>
+                        <span class="font-medium">James Kamau</span>
+                    </div>
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-600">Amount:</span>
+                        <span class="font-medium">KSh 15,000</span>
+                    </div>
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-600">Method:</span>
+                        <span class="font-medium">MPESA</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Reference:</span>
+                        <span class="font-medium">RFG45678</span>
+                    </div>
+                </div>
+                <div class="flex space-x-3">
+                    <button class="flex-1 bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 transition">
+                        Print Receipt
+                    </button>
+                    <button class="flex-1 bg-gray-100 text-gray-700 py-2 px-4 rounded hover:bg-gray-200 transition">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Toggle sidebar on mobile
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+
+        // Close modal
+        document.getElementById('closeModal').addEventListener('click', function() {
+            document.getElementById('paymentModal').classList.add('hidden');
+        });
+
+        // Simulate form submission
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            document.getElementById('paymentModal').classList.remove('hidden');
+        });
+
+        // Initialize chart
+        const ctx = document.getElementById('rentChart').getContext('2d');
+        const rentChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Rent Collected (KSh)',
+                    data: [185000, 195000, 210000, 220000, 230000, 240500],
+                    backgroundColor: 'rgba(79, 70, 229, 0.7)',
+                    borderColor: 'rgba(79, 70, 229, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return 'KSh ' + value.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return 'KSh ' + context.raw.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Payment method selection
+        document.querySelectorAll('.payment-method').forEach(method => {
+            method.addEventListener('click', function() {
+                document.querySelectorAll('.payment-method').forEach(m => {
+                    m.classList.remove('border-blue-500', 'bg-blue-100');
+                    m.classList.add('border-blue-100', 'bg-blue-50');
+                });
+                this.classList.remove('border-blue-100', 'bg-blue-50');
+                this.classList.add('border-blue-500', 'bg-blue-100');
+            });
+        });
+    </script>
+</body>
+</html>
